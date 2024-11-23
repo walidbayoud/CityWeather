@@ -1,6 +1,15 @@
 from flask import Flask, render_template, request
 from weather import get_current_weather
 from waitress import serve
+import logging
+import os
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(message)s',
+                    handlers=[
+                        logging.StreamHandler()
+                    ])
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -24,10 +33,13 @@ def get_weather():
     if not city or not city.strip():
         city = "Kansas City"
 
-    weather_data = get_current_weather(city)
+    
+    api_key = os.getenv("API_KEY")
+
+    weather_data = get_current_weather(key=api_key, city=city)
 
     # Debug: Log API response
-    print("API Response:", weather_data)
+    logging.debug("API Response: %s", weather_data)
 
     # Check for API errors or invalid data
     if not weather_data or 'cod' not in weather_data or weather_data['cod'] != 200:
@@ -48,5 +60,6 @@ def get_weather():
 
 # Run the app using Waitress
 if __name__ == "__main__":
-    print("Starting Flask server...")
+    logging.debug("Starting Flask server...")
+    logging.info("Visit http://localhost:8000 in your browser.")
     serve(app, host="0.0.0.0", port=8000)
