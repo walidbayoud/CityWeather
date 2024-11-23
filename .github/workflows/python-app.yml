@@ -12,10 +12,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3 # Updated to latest version
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4 # Updated to latest version
       with:
         python-version: '3.x'
         
@@ -25,5 +25,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run tests
+      env: # Add environment variable setup if needed
+        API_KEY: ${{ secrets.API_KEY }} # Example for sensitive API keys
       run: |
-        python -m unittest
+        python -m unittest discover # Discover all test modules and execute them
